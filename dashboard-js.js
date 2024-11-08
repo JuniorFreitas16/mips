@@ -175,43 +175,47 @@ document.addEventListener('DOMContentLoaded', function() {
         inspections.filter(i => i.status === 'NG').forEach(i => {
             defects[i.defect || 'Unknown'] = (defects[i.defect || 'Unknown'] || 0) + 1;
         });
-
+    
+        const sortedDefects = Object.entries(defects)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5);
+    
         return {
-            labels: Object.keys(defects),
-            data: Object.values(defects)
+            labels: sortedDefects.map(([defect]) => defect),
+            data: sortedDefects.map(([, count]) => count)
         };
     }
-
+    
     function prepareModelChartData(inspections) {
         const areas = {};
         inspections.filter(i => i.status === 'NG').forEach(i => {
             areas[i.area] = (areas[i.area] || 0) + 1;
         });
-
+    
+        const sortedAreas = Object.entries(areas)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5);
+    
         return {
-            labels: Object.keys(areas),
-            data: Object.values(areas)
+            labels: sortedAreas.map(([area]) => area),
+            data: sortedAreas.map(([, count]) => count)
         };
     }
+    
     function prepareVendorChartData(inspections) {
         const parts = {};
         inspections.filter(i => i.status === 'NG').forEach(i => {
             parts[i.part] = (parts[i.part] || 0) + 1;
         });
-
+    
+        const sortedParts = Object.entries(parts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5);
+    
         return {
-            labels: Object.keys(parts),
-            data: Object.values(parts)
+            labels: sortedParts.map(([part]) => part),
+            data: sortedParts.map(([, count]) => count)
         };
-
-        /*const sortedItems = Object.entries(counts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5);
-
-    return {
-        labels: sortedItems.map(([item]) => item),
-        values: sortedItems.map(([, count]) => count)
-    };*/
     }
 
     function prepareTrendChartData(inspections) {
@@ -241,17 +245,17 @@ document.addEventListener('DOMContentLoaded', function() {
         if (defectChart) {
             defectChart.destroy();
         }
-
+    
         const ctx = document.getElementById('defectChart')?.getContext('2d');
         if (!ctx) return;
-
+    
         defectChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: (data.labels).slice(0,5),
+                labels: data.labels,
                 datasets: [{
                     label: 'Defects Count',
-                    data: (data.data).slice(0,5),
+                    data: data.data,
                     backgroundColor: [
                         '#808080',
                         '#C0C0C0',
@@ -262,8 +266,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 }]
             },
             options: {
-                    responsive: true,
-                    plugins: {
+                responsive: true,
+                plugins: {
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        formatter: (value) => value,
+                        font: {
+                            weight: 'bold'
+                        }
+                    },
                     title: {
                         display: true,
                         text: 'Worst Defects',
@@ -275,53 +287,62 @@ document.addEventListener('DOMContentLoaded', function() {
                         display: false
                     }
                 }
-            }
+            },
+            plugins: [ChartDataLabels]
         });
     }
+    
 
-    function updateVendorChart(data) {
-        if (vendorChart) {
-            vendorChart.destroy();
-        }
+function updateVendorChart(data) {
+    if (vendorChart) {
+        vendorChart.destroy();
+    }
 
-        const ctx = document.getElementById('vendorChart')?.getContext('2d');
-        if (!ctx) return;
+    const ctx = document.getElementById('vendorChart')?.getContext('2d');
+    if (!ctx) return;
 
-        vendorChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: (data.labels).slice(0,5),
-                datasets: [{
-                    label: 'Parts Count',
-                    data: (data.data).slice(0,5),
-                    /*backgroundColor: generateColors(data.labels.length)*/
-                    backgroundColor: [
-                        '#808080',
-                        '#C0C0C0',
-                        '#C0C0C0',
-                        '#C0C0C0',
-                        '#C0C0C0'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Worst Parts',
-                        font:{
-                            size: 20
-                        }
-                    },
-                    legend:{
-                        display: false,
-                        position: "bottom",
+    vendorChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.labels,
+            datasets: [{
+                label: 'Parts Count',
+                data: data.data,
+                backgroundColor: [
+                    '#808080',
+                    '#C0C0C0',
+                    '#C0C0C0',
+                    '#C0C0C0',
+                    '#C0C0C0'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    formatter: (value) => value,
+                    font: {
+                        weight: 'bold'
                     }
+                },
+                title: {
+                    display: true,
+                    text: 'Worst Parts',
+                    font:{
+                        size: 20
+                    }
+                },
+                legend:{
+                    display: false,
                 }
             }
-        });
-    }
+        },
+        plugins: [ChartDataLabels]
+    });
+}
 
     function updateModelChart(data) {
         if (modelChart) {
@@ -334,10 +355,10 @@ document.addEventListener('DOMContentLoaded', function() {
         modelChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: (data.labels).slice(0,5),
+                labels: data.labels,
                 datasets: [{
-                    data: (data.data).slice(0,5),
-                    /*backgroundColor: generateColors(data.labels.length)*/
+                    label: 'Zones Count',
+                    data: data.data,
                     backgroundColor: [
                         '#808080',
                         '#C0C0C0',
@@ -350,6 +371,14 @@ document.addEventListener('DOMContentLoaded', function() {
             options: {
                 responsive: true,
                 plugins: {
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        formatter: (value) => value,
+                        font: {
+                            weight: 'bold'
+                        }
+                    },
                     title: {
                         display: true,
                         text: 'Worst Zones',
@@ -357,11 +386,12 @@ document.addEventListener('DOMContentLoaded', function() {
                             size: 20
                         }
                     },
-                    legend: {
+                    legend:{
                         display: false,
                     }
                 }
-            }
+            },
+            plugins: [ChartDataLabels]
         });
     }
 
@@ -432,30 +462,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function generateColors(count) {
-        const colors = [
-            'rgba(0, 0, 255, 1)',
-            'rgba(54, 162, 235, 0.8)',
-            'rgba(255, 206, 86, 0.8)',
-            'rgba(75, 192, 192, 0.8)',
-            'rgba(153, 102, 255, 0.8)',
-            'rgba(255, 159, 64, 0.8)',
-            'rgba(199, 199, 199, 0.8)',
-            'rgba(83, 102, 255, 0.8)',
-            'rgba(40, 159, 64, 0.8)',
-            'rgba(210, 199, 199, 0.8)'
-        ];
-
-        while (colors.length < count) {
-            colors.push(`rgba(${Math.floor(Math.random() * 255)}, 
-                             ${Math.floor(Math.random() * 255)}, 
-                             ${Math.floor(Math.random() * 255)}, 0.8)`);
-        }
-
-        return colors.slice(0, count);
-    }
-
-    function openDB() {
+   /* function openDB() {
         return new Promise((resolve, reject) => {
             const request = indexedDB.open('panel_inspection_db', 1);
             
@@ -483,7 +490,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             };
         });
-    }
+    }*/
 
     // Export functionality
     document.getElementById('exportButton')?.addEventListener('click', function() {
