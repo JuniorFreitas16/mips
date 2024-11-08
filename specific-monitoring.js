@@ -15,6 +15,43 @@ class SpecificMonitoringDashboard {
         this.startRealTimeUpdates();
     }
 
+    updateCharts(data) {
+        const defectsData = this.calculateChartData(data, 'defect');
+        this.updateChart(this.charts.defects, defectsData, 'Top 5 Worst Defects');
+    
+        const areasData = this.calculateChartData(data, 'area');
+        this.updateChart(this.charts.areas, areasData, 'Top 5 Worst Zones');
+    
+        const partsData = this.calculateChartData(data, 'part');
+        this.updateChart(this.charts.parts, partsData, 'Top 5 Worst Parts');
+    }
+
+    updateChart(chart, data, title) {
+        chart.data.labels = data.labels;
+        chart.data.datasets[0].data = data.values;
+        chart.options.plugins = {
+            title: {
+                display: true,
+                text: title,
+                font: {
+                    size: 20
+                }
+            },
+            legend: {
+                display: false
+            },
+            datalabels: {
+                anchor: 'end',
+                align: 'top',
+                formatter: (value) => value,
+                font: {
+                    weight: 'bold'
+                }
+            }
+        };
+        chart.update();
+    }
+
     initializeCharts() {
         this.charts.defects = new Chart(
             document.getElementById('defectsChart').getContext('2d'),
@@ -58,6 +95,14 @@ class SpecificMonitoringDashboard {
                             usePointStyle: true,
                             pointStyle: "line"
                         }
+                    },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        formatter: (value) => value,
+                        font: {
+                            weight: 'bold'
+                        }
                     }
                 },
                 scales: {
@@ -65,9 +110,9 @@ class SpecificMonitoringDashboard {
                         beginAtZero: true,
                         display: false
                     }
-                },
-
-            }
+                }
+            },
+            plugins: [ChartDataLabels]
         };
     }
 
