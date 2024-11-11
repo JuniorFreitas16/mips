@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load initial data
     loadDashboardData();
 
+
     // Add event listeners to filters
     document.querySelectorAll('.filter-group select, .filter-group input').forEach(filter => {
         filter.addEventListener('change', function() {
@@ -266,6 +267,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 }]
             },
             options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        display: false
+                    },
+                    x: {
+                        beginAtZero: true,
+                        display: true,
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
                 responsive: true,
                 plugins: {
                     datalabels: {
@@ -278,9 +292,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     title: {
                         display: true,
-                        text: 'Worst Defects',
+                        text: 'Top 5 Worst Defects',
                         font:{
-                            size: 20
+                            size: 16
                         }
                     },
                     legend: {
@@ -318,6 +332,19 @@ function updateVendorChart(data) {
             }]
         },
         options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    display: false
+                },
+                x: {
+                    beginAtZero: true,
+                    display: true,
+                    grid: {
+                        display: false
+                    }
+                }
+            },
             responsive: true,
             plugins: {
                 datalabels: {
@@ -330,9 +357,9 @@ function updateVendorChart(data) {
                 },
                 title: {
                     display: true,
-                    text: 'Worst Parts',
+                    text: 'Top 5 Worst Parts',
                     font:{
-                        size: 20
+                        size: 16
                     }
                 },
                 legend:{
@@ -369,6 +396,19 @@ function updateVendorChart(data) {
                 }]
             },
             options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        display: false
+                    },
+                    x: {
+                        beginAtZero: true,
+                        display: true,
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
                 responsive: true,
                 plugins: {
                     datalabels: {
@@ -381,9 +421,9 @@ function updateVendorChart(data) {
                     },
                     title: {
                         display: true,
-                        text: 'Worst Zones',
+                        text: 'Top 5 Worst Zones',
                         font:{
-                            size: 20
+                            size: 16
                         }
                     },
                     legend:{
@@ -413,7 +453,8 @@ function updateVendorChart(data) {
                         data: data.data.map(d => d.total),
                         borderColor: 'rgba(54, 162, 235, 1)',
                         backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        yAxisID: 'y-axis-1'
+                        yAxisID: 'y-axis-1',
+                        font: {size: 16}
                     },
                     {
                         label: 'NG Rate (%)',
@@ -425,13 +466,19 @@ function updateVendorChart(data) {
                 ]
             },
             options: {
+                aspectratio: 2,
                 responsive: true,
                 plugins: {
+                    legend: {
+                        display: true,
+                        position: "chartArea",
+                        align: "end"
+                    },
                     title: {
                         display: true,
                         text: 'Inspection Trend',
                         font:{
-                            size: 20
+                            size: 16
                         }
                     }
                 },
@@ -454,7 +501,7 @@ function updateVendorChart(data) {
                             text: 'NG Rate (%)'
                         },
                         grid: {
-                            drawOnChartArea: false
+                            drawOnChartArea: true
                         }
                     }
                 }
