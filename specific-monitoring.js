@@ -101,6 +101,7 @@ class SpecificMonitoringDashboard {
                         align: 'top',
                         formatter: (value) => value,
                         font: {
+                            size: 14,
                             weight: 'bold'
                         }
                     }
@@ -109,6 +110,13 @@ class SpecificMonitoringDashboard {
                     y: {
                         beginAtZero: true,
                         display: false
+                    },
+                    x: {
+                        beginAtZero: true,
+                        display: true,
+                        grid: {
+                            display: false
+                        }
                     }
                 }
             },
