@@ -251,8 +251,7 @@ function getInspectionData() {
     };
 }
 
-    //Adiciona listener para o formulário de inspeção
-    document.getElementById("inspection-form")?.addEventListener("submit", function(e) {
+document.getElementById("inspection-form")?.addEventListener("submit", function(e) {
     e.preventDefault();
 
     if (!currentPlanId) {
@@ -262,40 +261,63 @@ function getInspectionData() {
 
     const inspectionData = getInspectionData();
 
-
     saveInspectionToDB(inspectionData)
         .then(() => {
             loadInspections();
-             // Recarregar a lista de inspeções
-            document.getElementById("defect").value = ""; // Limpar campo
-            document.getElementById("part").value = ""; // Limpar campo
-            document.getElementById("area").value = ""; // Limpar campo
-            document.getElementById("defect2").value = ""; // Limpar campo
-            document.getElementById("part2").value = ""; // Limpar campo
-            document.getElementById("area2").value = ""; // Limpar campo
-            document.getElementById("serial_number").value = ""; // Limpar campo
-            document.getElementById("photoBase64").value = "";
-            document.getElementById("photo").value = "";
-            document.getElementById("imagePreview").style.display = 'none';
-            document.getElementById("photoBase64-2").value = "";
-            document.getElementById("photo2").value = "";
-            document.getElementById("imagePreview2").style.display = 'none';
-            document.getElementById("serial_number").focus(); // Focar no campo
+            
+            // Limpar campos de forma mais segura
+            const fieldsToReset = [
+                "defect", "part", "area", 
+                "defect2", "part2", "area2", 
+                "serial_number", "photoBase64", 
+                "photo", "photoBase64-2", "photo2","status"
+            ];
+
+            fieldsToReset.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.value = "";
+                }
+            });
+
+            // Verificar e limpar previews de imagem de forma segura
+            const imagePreview = document.getElementById("imagePreview");
+            const imagePreview2 = document.getElementById("imagePreview2");
+
+            if (imagePreview) {
+                imagePreview.style.display = 'none';
+                imagePreview.src = '';
+            }
+
+            if (imagePreview2) {
+                imagePreview2.style.display = 'none';
+                imagePreview2.src = '';
+            }
+
+            document.getElementById("serial_number").focus();
             
             // Mostrar mensagem de sucesso
             const alertMessage = document.getElementById("alert-message");
-            alertMessage.textContent = "Inspeção salva com sucesso!";
-            alertMessage.classList.add("show");
-            setTimeout(() => alertMessage.classList.remove("show"), 2000);
-            location.reload();
+            if (alertMessage) {
+                alertMessage.textContent = "Inspeção salva com sucesso!";
+                alertMessage.classList.add("show");
+                alertMessage.style.display = 'block'; // Garanta que o display seja 'block'
+                setTimeout(() => {
+                    if (alertMessage) {
+                        alertMessage.classList.remove("show");
+                        alertMessage.style.display = 'none'; // Esconde novamente após 2 segundos
+                    }
+                }, 2000);
+            }
+
+            /*location.reload();*/
         })
         .catch(error => {
             console.error("Erro ao salvar inspeção:", error);
             alert(error.message || "Erro ao salvar inspeção");
-            location.reload();
+            
         });
-
-});
+    });
 
     function updateDashboard(inspections) {
         if (!inspections) {
