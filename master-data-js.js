@@ -171,13 +171,19 @@ function showImageModal2(event, imageData2) {
         z-index: 1000;
     `;
     
-    const img2 = document.createElement('img2');
+    const img2 = document.createElement('img');
     img2.src = imageData2;
     img2.style.cssText = `
         max-width: 90%;
         max-height: 90%;
         object-fit: contain;
     `;
+    
+    // Corrigir erro de digitação na criação do elemento
+    img2.onerror = () => {
+        console.error('Erro ao carregar a imagem');
+        modal2.innerHTML = '<p style="color: white;">Erro ao carregar a imagem</p>';
+    };
     
     modal2.onclick = () => modal2.remove();
     modal2.appendChild(img2);
